@@ -21,13 +21,17 @@ types:
   Field:
     type: object
     properties:
-      double: double
-      string: string
-
+      numeric: number
+      categorial: string
+      date: Date
+      
+  Date:
+    type: string
+    pattern: "\\d\\d-\\d\\d-\\d\\d\\d\\d"
 /model/create:
   put:
     responses:
       200:
         body:
           application/json:
-            type: Org
+            type: Data
