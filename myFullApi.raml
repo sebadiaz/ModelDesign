@@ -3,43 +3,29 @@ title: ModelConstructor API
 version: v1.0
 baseUri: https://api.seb.com/{version}/model
 mediaType:  application/json
-securitySchemes:
-  oauth_2_0: !include securitySchemes/oauth_2_0.raml
-
-traits:
-securedBy: [ oauth_2_0 ]
 types:
   Data:
     type: object
     properties:
-      Headers: Field[]
+      Headers: FieldInfo[]
       Rows: Row[]
-  Field:
+  FieldInfo:
     type: object
     properties:
       name: string
       type:  string
-      title?:    string
-  Phone:
-    type: string
-    pattern: "[0-9|-]+"
-  Manager:
-    type: Person
+  Row:
+    type: object
     properties:
-      reports: Person[]
-      phone:  Phone
-  Admin:
-    type: Person
+      fields: Field[]
+  Field:
+    type: object
     properties:
-      clearanceLevel:
-        enum: [ low, high ]
-  AlertableAdmin:
-    type: Admin
-    properties:
-      phone: Phone
-  Alertable: Manager | AlertableAdmin
-/orgs/{orgId}:
-  get:
+      double: double
+      string: string
+
+/model/create:
+  put:
     responses:
       200:
         body:
