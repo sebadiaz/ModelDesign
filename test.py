@@ -1,6 +1,6 @@
 '''
 Created on 21 mai 2017
-
+https://www.afpy.org/Members/cedric/mas-python/pythonhowto-2009-12-04-5314484858
 @author: buissondiaz
 '''
 from itertools import count
