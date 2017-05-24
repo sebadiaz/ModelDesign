@@ -1,16 +1,14 @@
 '''
-Created on 21 mai 2017
+Created on 24 mai 2017
 
 @author: buissondiaz
 '''
-from itertools import count
-import datetime
+import pickle
 import numpy
-import requests
-import schedule
-import time
-import sys
-
+import talib
+import os
+import math
+import csv
 moneys = [
     "ADC_BTC",
     "ADC_DOGE",
@@ -108,57 +106,86 @@ moneys = [
     "ZET_DOGE"
 ]
 
-def job():
-  for money in moneys:
+for money in moneys:
     filename=money+"_save.p"
-    url = 'https://bleutrade.com/api/v2/public/getcandles?market='+money+'&period=4h&lasthours=724&count=999999'
-
-    item= requests.get(url).json()
-    myList=[]
-    myList2=[]
-    counter=0
-    for price in item['result']:
-	myList.append(float(price['Close']))
-	data = {}
-	data["timestamp"]= datetime.datetime.strptime(price['TimeStamp'], "%Y-%m-%d %H:%M:%S");
-	data["volume"]= price['Volume'];
-	data["high"]= price['High'];
-	data["low"]= price['Low'];
-	data["close"]= price['Close'];
-	data["open"]= price['Open'];
-	data["baseVolume"]= price['BaseVolume'];
-	
-	
-	myList2.append(data)
-	counter=counter+1
-    import pickle
-    import os.path
     loadd=[]
     if os.path.isfile(filename) :
-	loadd = pickle.load( open( filename, "rb" ) )
-    mergedlist = loadd + myList2
-    myList2=sorted(
-	mergedlist,
-	key=lambda x: x['timestamp'], reverse=False
-    )
-    myList3=[]
-    keys=set()
-    for k in myList2:
-	    if k['timestamp'] not in keys:
-		keys.add(k['timestamp'])
-		myList3.append(k)
-    pickle.dump( myList3, open( filename, "wb" ) )
-    close = numpy.random.random(100)
-    close = numpy.array(myList)
-    print len(myList3)
-    print len(myList2)
-    print money+" clean:"+str(myList3.__sizeof__())
-    print money+" previous:"+str(myList2.__sizeof__())
-
-schedule.every(4).hours.do(job)
-job()
-print "first  job"
-while True:
-    schedule.run_pending()
-    sys.stdout.write('.')
-    time.sleep(1)
+     openfile = open( filename, "rb" )
+     try:
+      loadd = pickle.load( openfile )
+     except IOError as e:
+      print "Error on "+money +" "+e
+      continue 
+     closeIn=[]
+     highIn=[]
+     lowIn=[]
+     openIn=[]
+     volumeIn=[]
+     for loa in loadd:
+         closeIn.append(float(loa['close']))
+         highIn.append(float(loa['high']))
+         lowIn.append(float(loa['low']))
+         openIn.append(float(loa['open']))
+         volumeIn.append(float(loa['volume']))
+     close = numpy.array(closeIn)
+     high = numpy.array(highIn)
+     low = numpy.array(lowIn)
+     openv = numpy.array(openIn)
+     volume= numpy.array(volumeIn)
+     adx=talib.ADX(high, low, close)
+     adxr=talib.ADXR(high, low, close)
+     apo=talib.APO(close)
+     aroondown, aroonup =talib.AROON(high,low)
+     aroonosc=talib.AROONOSC(high,low)
+     bop=talib.BOP(openv,high,low,close)
+     cci=talib.CCI(high,low,close)
+     cmo=talib.CMO(close)
+     dx=talib.DX(high,low,close)
+     macd, macdsignal, macdhist =talib.MACD(close)
+     mfi=talib.MFI(high,low,close,volume)
+     minus_di=talib.MINUS_DI(high, low, close)
+     #minus_dm=talib.MINUS_DM(high, low, close)
+     momentum = talib.MOM(close)
+     plus_di=talib.PLUS_DI(high,low,close)
+     #plus_dm=talib.PLUS_DM(high,low,close)
+     ppo=talib.PPO(close)
+     roc=talib.ROC(close)
+     rocp=talib.ROCP(close)
+     rocr=talib.ROCR(close)
+     rocr100=talib.ROCR100(close)
+     rsi = talib.RSI(close,10)
+     slowk, slowd=talib.STOCH(high,low,close)
+     fastk, fastd=talib.STOCHF(high,low,close)
+     fastkrsi, fastdrsi=talib.STOCHRSI(close)
+     trix=talib.TRIX(close)
+     ultosc=talib.ULTOSC(high, low, close)
+     willr=talib.WILLR(high, low, close)
+     
+     for i in range(1,len(loadd)) :
+         index=len(loadd)-i
+         data=[]
+         if close[index-4]==0:
+             continue
+         datay=(close[index]-close[index-4])/close[index-4]>0.01
+         if datay:
+             datay=1
+         else:
+             datay=0
+         datadiffadx=adx[index-4]-adx[index-5]
+         if math.isnan(datadiffadx):
+            continue
+         dataadx=adx[index-4]
+         datadiffrsi=rsi[index-4]-rsi[index-5]
+         datarsi=rsi[index-5]
+         datadiffmom=momentum[index-4]-momentum[index-5]
+         datamom=momentum[index-5]
+         datadiffslowk=slowk[index-4]-slowk[index-5]
+         dataslowk=slowk[index-5]
+         datadiffwillr=willr[index-4]-willr[index-5]
+         datawillr=willr[index-5]
+         with open('eggs.csv', 'a') as csvfile:
+             spamwriter = csv.writer(csvfile, delimiter=' ',
+                            quotechar='|', quoting=csv.QUOTE_MINIMAL)
+             spamwriter.writerow([money, datay, datadiffadx,dataadx,datadiffrsi,datarsi,datadiffmom,datamom,datadiffslowk,dataslowk,datadiffwillr,datawillr])
+         
+     
