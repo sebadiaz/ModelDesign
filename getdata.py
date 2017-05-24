@@ -111,7 +111,7 @@ moneys = [
 def job():
   for money in moneys:
     filename=money+"_save.p"
-    url = 'https://bleutrade.com/api/v2/public/getcandles?market='+money+'&period=8h&lasthours=724&count=999999'
+    url = 'https://bleutrade.com/api/v2/public/getcandles?market='+money+'&period=4h&lasthours=724&count=999999'
 
     item= requests.get(url).json()
     myList=[]
@@ -150,7 +150,8 @@ def job():
     pickle.dump( myList3, open( filename, "wb" ) )
     close = numpy.random.random(100)
     close = numpy.array(myList)
-
+    print len(myList3)
+    print len(myList2)
     print money+" clean:"+str(myList3.__sizeof__())
     print money+" previous:"+str(myList2.__sizeof__())
 
