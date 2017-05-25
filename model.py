@@ -36,6 +36,7 @@ print "np.max=", np.max(abs(X))
 
 print(bad_indices)
 
+print ""
 print "Logisitic"
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
 clf = LogisticRegression(C=0.03, class_weight='auto')
@@ -52,6 +53,7 @@ print (clf.predict_proba(X_test))
 print(clf)
 print(pd.crosstab(y_test, yscore, rownames=['True'], colnames=['Predicted'], margins=True))
 
+print ""
 print "Discrim"
 import numpy as np
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
@@ -69,6 +71,7 @@ print(metrics.classification_report(y_test, yscore))
 print(metrics.confusion_matrix(y_test, yscore))
 print(pd.crosstab(y_test, yscore, rownames=['True'], colnames=['Predicted'], margins=True))
 
+print ""
 print "Tree"
 from sklearn.tree import DecisionTreeClassifier
 clf = DecisionTreeClassifier()
@@ -82,6 +85,7 @@ print(metrics.classification_report(y_test, yscore))
 print(metrics.confusion_matrix(y_test, yscore))
 print(pd.crosstab(y_test, yscore, rownames=['True'], colnames=['Predicted'], margins=True))
 
+print ""
 print "Adaboost"
 from sklearn.ensemble import AdaBoostClassifier
 clf = AdaBoostClassifier()
@@ -95,9 +99,11 @@ print(metrics.classification_report(y_test, yscore))
 print(metrics.confusion_matrix(y_test, yscore))
 print(pd.crosstab(y_test, yscore, rownames=['True'], colnames=['Predicted'], margins=True))
 
+print ""
 print "Random Forest"
 from sklearn.ensemble import  RandomForestClassifier
-clf = RandomForestClassifier()
+clf = RandomForestClassifier(n_estimators=10, max_depth=None,
+     min_samples_split=2, random_state=0)
 clf.fit(X_train, y_train)
 yscore=clf.predict(X_test)
 fpr, tpr, thresholds = metrics.roc_curve(y_test, yscore, pos_label=2)
@@ -108,6 +114,36 @@ print(metrics.classification_report(y_test, yscore))
 print(metrics.confusion_matrix(y_test, yscore))
 print(pd.crosstab(y_test, yscore, rownames=['True'], colnames=['Predicted'], margins=True))
 
+print ""
+print "Random Forest ExtraTreesClassifier"
+from sklearn.ensemble import ExtraTreesClassifier
+clf = ExtraTreesClassifier(n_estimators=10, max_depth=None,
+     min_samples_split=2, random_state=0)
+clf.fit(X_train, y_train)
+yscore=clf.predict(X_test)
+fpr, tpr, thresholds = metrics.roc_curve(y_test, yscore, pos_label=2)
+print fpr
+print tpr
+print thresholds
+print(metrics.classification_report(y_test, yscore))
+print(metrics.confusion_matrix(y_test, yscore))
+print(pd.crosstab(y_test, yscore, rownames=['True'], colnames=['Predicted'], margins=True))
+
+print ""
+print "GradientBoostingClassifier"
+from sklearn.ensemble import GradientBoostingClassifier
+clf = GradientBoostingClassifier()
+clf.fit(X_train, y_train)
+yscore=clf.predict(X_test)
+fpr, tpr, thresholds = metrics.roc_curve(y_test, yscore, pos_label=2)
+print fpr
+print tpr
+print thresholds
+print(metrics.classification_report(y_test, yscore))
+print(metrics.confusion_matrix(y_test, yscore))
+print(pd.crosstab(y_test, yscore, rownames=['True'], colnames=['Predicted'], margins=True))
+
+print ""
 print "KNeighbors"
 from sklearn.neighbors import KNeighborsClassifier
 clf = KNeighborsClassifier()
@@ -121,6 +157,7 @@ print(metrics.classification_report(y_test, yscore))
 print(metrics.confusion_matrix(y_test, yscore))
 print(pd.crosstab(y_test, yscore, rownames=['True'], colnames=['Predicted'], margins=True))
 
+print ""
 print "SVC"
 from sklearn.svm import SVC
 clf = SVC()
@@ -134,6 +171,7 @@ print(metrics.classification_report(y_test, yscore))
 print(metrics.confusion_matrix(y_test, yscore))
 print(pd.crosstab(y_test, yscore, rownames=['True'], colnames=['Predicted'], margins=True))
 
+print ""
 print "GaussianNB"
 from sklearn.naive_bayes import GaussianNB
 clf = GaussianNB()
@@ -147,9 +185,11 @@ print(metrics.classification_report(y_test, yscore))
 print(metrics.confusion_matrix(y_test, yscore))
 print(pd.crosstab(y_test, yscore, rownames=['True'], colnames=['Predicted'], margins=True))
 
-print "MLP"
+print ""
+print "--MLP--"
 from sklearn.neural_network import MLPClassifier
-clf = MLPClassifier()
+clf = MLPClassifier(solver='adam', alpha=1e-5,max_iter=1000,
+                    hidden_layer_sizes=(5, 2), random_state=1)
 clf.fit(X_train, y_train)
 yscore=clf.predict(X_test)
 fpr, tpr, thresholds = metrics.roc_curve(y_test, yscore, pos_label=2)
@@ -160,6 +200,7 @@ print(metrics.classification_report(y_test, yscore))
 print(metrics.confusion_matrix(y_test, yscore))
 print(pd.crosstab(y_test, yscore, rownames=['True'], colnames=['Predicted'], margins=True))
 
+print ""
 print "QuadraticDiscriminantAnalysis"
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 clf = QuadraticDiscriminantAnalysis()
